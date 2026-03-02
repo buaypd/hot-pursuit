@@ -168,6 +168,12 @@ public:
         if(target.sprite.x()-sprite.x() < 0){
             sprite.set_x(sprite.x() - speed);
         }
+        if(target.sprite.y()-sprite.y() > 0){
+            sprite.set_y(sprite.y() + speed);
+        }
+        if(target.sprite.y()-sprite.y() < 0){
+            sprite.set_y(sprite.y() - speed);
+        }
         bounding_box = create_bounding_box(sprite, size);
     }
 
