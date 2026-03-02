@@ -7,6 +7,7 @@
 #include <bn_sprite_ptr.h>
 #include <bn_sprite_text_generator.h>
 #include <bn_random.h>
+#include <bn_vector.h>
 
 #include "common_fixed_8x16_font.h"
 #include "bn_sprite_items_dot.h"
@@ -211,22 +212,30 @@ int main()
 
     //bn::sprite_ptr enemy_sprite = bn::sprite_items::square.create_sprite(-30, 22);
     //bn::rect enemy_bounding_box = create_bounding_box(enemy_sprite, ENEMY_SIZE);
-    Enemy enemy = Enemy(-30,22,1,ENEMY_SIZE);
+
+    bn::vector<Enemy, 5> enemies;
+
+    enemies.push_back(Enemy(-30,24,1,ENEMY_SIZE));
+    enemies.push_back(Enemy(30,47,1,ENEMY_SIZE));
+    enemies.push_back(Enemy(-50,12,1,ENEMY_SIZE));
+    
 
     while (true)
     {
         player.update();
-        enemy.update(player);
+        for(int i = 0; i < enemies.size(); i++){
+        enemies[i].update(player);
 
         // Reset the current score and player position if the player collides with enemy
-        if (enemy.bounding_box.intersects(player.bounding_box))
+        if (enemies[i].bounding_box.intersects(player.bounding_box))
         {
             scoreDisplay.resetScore();
             // player.sprite.set_x(44);
             // player.sprite.set_y(22);
-            enemy.sprite.set_x(rng.get_int(MIN_X, MAX_X));
-            enemy.sprite.set_y(rng.get_int(MIN_X, MAX_X));
+            enemies[i].sprite.set_x(rng.get_int(MIN_X, MAX_X));
+            enemies[i].sprite.set_y(rng.get_int(MIN_X, MAX_X));
         }
+    }
 
         // Update the scores and disaply them
         scoreDisplay.update();
