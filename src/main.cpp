@@ -174,6 +174,20 @@ public:
             sprite.set_y(sprite.y() - speed);
         }
         bounding_box = create_bounding_box(sprite, size);
+
+        
+        bn::fixed x = sprite.x();
+        bn::fixed y = sprite.y();
+
+        if (x < MIN_X)
+            sprite.set_x(MIN_X);
+        if (x > MAX_X)
+            sprite.set_x(MAX_X);
+        if (y < MIN_Y)
+            sprite.set_y(MIN_Y);
+        if (y > MAX_Y)
+            sprite.set_y(MAX_Y);
+        // b
     }
 
     // Create the sprite. This will be moved to a constructor
