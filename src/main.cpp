@@ -222,8 +222,8 @@ int main()
         if (enemy.bounding_box.intersects(player.bounding_box))
         {
             scoreDisplay.resetScore();
-            player.sprite.set_x(44);
-            player.sprite.set_y(22);
+            // player.sprite.set_x(44);
+            // player.sprite.set_y(22);
             enemy.sprite.set_x(rng.get_int(MIN_X, MAX_X));
             enemy.sprite.set_y(rng.get_int(MIN_X, MAX_X));
         }
