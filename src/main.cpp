@@ -14,6 +14,7 @@
 #include "bn_sprite_items_square.h"
 #include "bn_sprite_items_coin.h"
 #include "bn_sprite_items_rat.h"
+#include "bn_sprite_items_bar.h"
 
 // Width and height of the the player bounding box
 static constexpr bn::size PLAYER_SIZE = {8, 8};
