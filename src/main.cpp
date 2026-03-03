@@ -12,6 +12,8 @@
 #include "common_fixed_8x16_font.h"
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
+#include "bn_sprite_items_coin.h"
+#include "bn_sprite_items_rat.h"
 
 // Width and height of the the player bounding box
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -110,7 +112,7 @@ class Player
 {
 public:
     Player(int starting_x, int starting_y, bn::fixed player_speed, bn::size player_size) : 
-    sprite(bn::sprite_items::dot.create_sprite(starting_x, starting_y)),
+    sprite(bn::sprite_items::coin.create_sprite(starting_x, starting_y)),
     speed(player_speed),
     size(player_size),
     bounding_box(create_bounding_box(sprite, size))
@@ -161,7 +163,7 @@ class Enemy
 {
 public:
     Enemy(int starting_x, int starting_y, bn::fixed enemy_speed, bn::size enemy_size) : 
-    sprite(bn::sprite_items::square.create_sprite(starting_x, starting_y)),
+    sprite(bn::sprite_items::rat.create_sprite(starting_x, starting_y)),
     speed(enemy_speed),
     size(enemy_size),
     bounding_box(create_bounding_box(sprite, size))
@@ -174,15 +176,20 @@ public:
     {
         if(target.sprite.x()-sprite.x() > 0){
             sprite.set_x(sprite.x() + speed);
+            sprite.set_rotation_angle_safe(-45);
         }
         if(target.sprite.x()-sprite.x() < 0){
             sprite.set_x(sprite.x() - speed);
+            sprite.set_rotation_angle_safe(90+45);
         }
         if(target.sprite.y()-sprite.y() > 0){
             sprite.set_y(sprite.y() + speed);
+            
+            sprite.set_rotation_angle_safe(-45-90);
         }
         if(target.sprite.y()-sprite.y() < 0){
             sprite.set_y(sprite.y() - speed);
+            sprite.set_rotation_angle_safe(45);
         }
         bounding_box = create_bounding_box(sprite, size);
 
@@ -217,7 +224,7 @@ int main()
 
     enemies.push_back(Enemy(rng.get_int(MIN_X, MAX_X),
                             rng.get_int(MIN_X, MAX_X),
-                            1,ENEMY_SIZE));
+                            .4,ENEMY_SIZE));
     
 
     while (true)
@@ -228,7 +235,7 @@ int main()
 
             enemies.push_back(Enemy(rng.get_int(MIN_X, MAX_X),
                                     rng.get_int(MIN_X, MAX_X),
-                                    1,ENEMY_SIZE));
+                                    .5,ENEMY_SIZE));
         } 
         if (scoreDisplay.score >= 1000 && enemies.size() <3){
 
