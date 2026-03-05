@@ -12,6 +12,8 @@
 #include "common_fixed_8x16_font.h"
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
+#include "bn_sprite_items_coin.h"
+#include "bn_sprite_items_rat.h"
 #include "bn_sprite_items_bar.h"
 #include "boost_bar.h"
 
@@ -111,12 +113,12 @@ public:
 class Player
 {
 public:
-    Player(int starting_x, int starting_y, bn::fixed player_speed, bn::size player_size) : 
-    sprite(bn::sprite_items::dot.create_sprite(starting_x, starting_y)),
-    speed(player_speed),
-    size(player_size),
-    bounding_box(create_bounding_box(sprite, size))
-    {}
+    Player(int starting_x, int starting_y, bn::fixed player_speed, bn::size player_size) : sprite(bn::sprite_items::coin.create_sprite(starting_x, starting_y)),
+                                                                                           speed(player_speed),
+                                                                                           size(player_size),
+                                                                                           bounding_box(create_bounding_box(sprite, size))
+    {
+    }
 
     /**
      * Update the position and bounding box of the player based on d-pad movement.
@@ -162,33 +164,40 @@ public:
 class Enemy
 {
 public:
-    Enemy(int starting_x, int starting_y, bn::fixed enemy_speed, bn::size enemy_size) : 
-    sprite(bn::sprite_items::square.create_sprite(starting_x, starting_y)),
-    speed(enemy_speed),
-    size(enemy_size),
-    bounding_box(create_bounding_box(sprite, size))
-    {}
+    Enemy(int starting_x, int starting_y, bn::fixed enemy_speed, bn::size enemy_size) : sprite(bn::sprite_items::rat.create_sprite(starting_x, starting_y)),
+                                                                                        speed(enemy_speed),
+                                                                                        size(enemy_size),
+                                                                                        bounding_box(create_bounding_box(sprite, size))
+    {
+    }
 
     /**
      * Update the position and bounding box of the enemy based on d-pad movement.
      */
-    void update(Player& target)
+    void update(Player &target)
     {
-        if(target.sprite.x()-sprite.x() > 0){
+        if (target.sprite.x() - sprite.x() > 0)
+        {
             sprite.set_x(sprite.x() + speed);
+            sprite.set_rotation_angle_safe(-45);
         }
-        if(target.sprite.x()-sprite.x() < 0){
+        if (target.sprite.x() - sprite.x() < 0)
+        {
             sprite.set_x(sprite.x() - speed);
+            sprite.set_rotation_angle_safe(90 + 45);
         }
-        if(target.sprite.y()-sprite.y() > 0){
+        if (target.sprite.y() - sprite.y() > 0)
+        {
             sprite.set_y(sprite.y() + speed);
+
+            sprite.set_rotation_angle_safe(-45 - 90);
         }
-        if(target.sprite.y()-sprite.y() < 0){
+        if (target.sprite.y() - sprite.y() < 0)
+        {
             sprite.set_y(sprite.y() - speed);
+            sprite.set_rotation_angle_safe(45);
         }
         bounding_box = create_bounding_box(sprite, size);
-
-        
     }
 
     // Create the sprite. This will be moved to a constructor
@@ -197,7 +206,6 @@ public:
     bn::size size;         // The width and height of the sprite
     bn::rect bounding_box; // The rectangle around the sprite for checking collision
 };
-
 
 int main()
 {
@@ -214,38 +222,39 @@ int main()
     Player player = Player(-50, 22, 3, PLAYER_SIZE);
     player.bounding_box = create_bounding_box(player.sprite, player.size);
     BoostBar boost_bar;
-    //bn::sprite_ptr enemy_sprite = bn::sprite_items::square.create_sprite(-30, 22);
-    //bn::rect enemy_bounding_box = create_bounding_box(enemy_sprite, ENEMY_SIZE);
+    // bn::sprite_ptr enemy_sprite = bn::sprite_items::square.create_sprite(-30, 22);
+    // bn::rect enemy_bounding_box = create_bounding_box(enemy_sprite, ENEMY_SIZE);
 
     bn::vector<Enemy, 5> enemies;
 
     enemies.push_back(Enemy(rng.get_int(MIN_X, MAX_X),
-                            rng.get_int(MIN_Y, MAX_Y),
-                            1,ENEMY_SIZE));
-    
-    
+                            rng.get_int(MIN_X, MAX_X),
+                            .4, ENEMY_SIZE));
+
     while (true)
     {
 
-
         player.update();
         boost_bar.update();
-         duration++;
+        duration++;
 
-        if(scoreDisplay.score >= 500 && enemies.size() <2){
-
-            enemies.push_back(Enemy(rng.get_int(MIN_X, MAX_X),
-                                    rng.get_int(MIN_X, MAX_X),
-                                    1,ENEMY_SIZE));
-        } 
-        if (scoreDisplay.score >= 1000 && enemies.size() <3){
+        if (scoreDisplay.score >= 500 && enemies.size() < 2)
+        {
 
             enemies.push_back(Enemy(rng.get_int(MIN_X, MAX_X),
                                     rng.get_int(MIN_X, MAX_X),
-                                    1,ENEMY_SIZE));
+                                    .5, ENEMY_SIZE));
+        }
+        if (scoreDisplay.score >= 1000 && enemies.size() < 3)
+        {
+
+            enemies.push_back(Enemy(rng.get_int(MIN_X, MAX_X),
+                                    rng.get_int(MIN_X, MAX_X),
+                                    1, ENEMY_SIZE));
         }
 
-        for(int i = 0; i < enemies.size(); i++){
+        for (int i = 0; i < enemies.size(); i++)
+        {
             enemies[i].update(player);
 
             // Reset the current score and player position if the player collides with enemy
