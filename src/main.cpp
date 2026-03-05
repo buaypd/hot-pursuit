@@ -13,6 +13,7 @@
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "bn_sprite_items_bar.h"
+#include "boost_bar.h"
 
 // Width and height of the the player bounding box
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -203,6 +204,8 @@ int main()
     bn::core::init();
     bn::random rng = bn::random();
 
+    int duration = 0;
+
     // Create a new score display
     ScoreDisplay scoreDisplay = ScoreDisplay();
 
@@ -210,20 +213,24 @@ int main()
     // TODO: we will move the initialization logic to a constructor.
     Player player = Player(-50, 22, 3, PLAYER_SIZE);
     player.bounding_box = create_bounding_box(player.sprite, player.size);
-
+    BoostBar boost_bar;
     //bn::sprite_ptr enemy_sprite = bn::sprite_items::square.create_sprite(-30, 22);
     //bn::rect enemy_bounding_box = create_bounding_box(enemy_sprite, ENEMY_SIZE);
 
     bn::vector<Enemy, 5> enemies;
 
     enemies.push_back(Enemy(rng.get_int(MIN_X, MAX_X),
-                            rng.get_int(MIN_X, MAX_X),
+                            rng.get_int(MIN_Y, MAX_Y),
                             1,ENEMY_SIZE));
     
-
+    
     while (true)
     {
+
+
         player.update();
+        boost_bar.update();
+         duration++;
 
         if(scoreDisplay.score >= 500 && enemies.size() <2){
 
@@ -248,10 +255,10 @@ int main()
                 // player.sprite.set_x(44);
                 // player.sprite.set_y(22);
                 enemies[i].sprite.set_x(rng.get_int(MIN_X, MAX_X));
-                enemies[i].sprite.set_y(rng.get_int(MIN_X, MAX_X));
+                enemies[i].sprite.set_y(rng.get_int(MIN_Y, MAX_Y));
             }
         }
-
+        boost_bar.draw(duration);
         // Update the scores and disaply them
         scoreDisplay.update();
         rng.update();
